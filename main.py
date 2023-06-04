@@ -17,6 +17,8 @@ SPACESHIP_HEIGHT = 40
 VELOCITY = 5
 # Количество кадров в секунду
 FPS = 60
+# Шрифт здоровья
+HEALTH_FONT = pygame.font.SysFont('comicsans', 20)
 
 # Ограничитель кадров
 clock = pygame.time.Clock()
@@ -50,6 +52,10 @@ YELLOW_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(
 # Создаем два объекта/прямоугольника
 red = pygame.Rect(100, 150, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
 yellow = pygame.Rect(500, 150, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+
+# Здоровье игроков
+red_health = 10
+yellow_health = 10
 
 # Функция движения красного корабля
 def red_handle_movement(keys_pressed, red):
@@ -97,6 +103,14 @@ while True:
     # Рисуем корабли
     screen.blit(YELLOW_SPACESHIP, (yellow.x, yellow.y))
     screen.blit(RED_SPACESHIP, (red.x, red.y))
+
+    # Отображаем здоровье на экране
+    red_health_text = HEALTH_FONT.render(
+        "Health: " + str(red_health), 1, "white")
+    yellow_health_text = HEALTH_FONT.render(
+        "Health: " + str(yellow_health), 1, "white")
+    screen.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
+    screen.blit(yellow_health_text, (10, 10))
 
     # Постоянно проверяем события игры и если присутствует событие Выход - останавливаем игру.
     for event in pygame.event.get():
