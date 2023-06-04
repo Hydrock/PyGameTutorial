@@ -19,6 +19,9 @@ VELOCITY = 5
 FPS = 60
 # Шрифт здоровья
 HEALTH_FONT = pygame.font.SysFont('comicsans', 20)
+# Пользовательские события попаданий
+YELLOW_HIT = pygame.USEREVENT + 1
+RED_HIT = pygame.USEREVENT + 2
 
 # Ограничитель кадров
 clock = pygame.time.Clock()
@@ -56,6 +59,11 @@ yellow = pygame.Rect(500, 150, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
 # Здоровье игроков
 red_health = 10
 yellow_health = 10
+
+# Хранение выпущенных пуль
+red_bullets = []
+yellow_bullets = []
+MAX_BULLETS = 3
 
 # Функция движения красного корабля
 def red_handle_movement(keys_pressed, red):
@@ -116,6 +124,24 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
+
+        # Если произошло событие нажатия клавиши
+        if event.type == pygame.KEYDOWN:
+            # И нажали клавишу Left Ctrl, а так же если длина листа выпущенных пуль красного меньше минимального
+            if event.key == pygame.K_LCTRL and len(red_bullets) < MAX_BULLETS:
+                # Создаем объект прямоугольника для Пули
+                bullet = pygame.Rect(
+                    red.x + red.width, red.y + red.height//2 - 2, 10, 5)
+                # Добавляем выпущенную пулю красному
+                red_bullets.append(bullet)
+
+            # Если нажали клавишу Right Control, создаем выпущенную пулю желтому игроку
+            if event.key == pygame.K_RCTRL and len(yellow_bullets) < MAX_BULLETS:
+                # Создаем объект прямоугольника для Пули
+                bullet = pygame.Rect(
+                    yellow.x, yellow.y + yellow.height//2 - 2, 10, 5)
+                # Добавляем выпущенную пулю желтому
+                yellow_bullets.append(bullet)
 
     # Узнаем нажатие клавишей
     keys_pressed = pygame.key.get_pressed()
