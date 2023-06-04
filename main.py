@@ -63,7 +63,10 @@ yellow_health = 10
 # Хранение выпущенных пуль
 red_bullets = []
 yellow_bullets = []
+# Макс. выпущенных пуль
 MAX_BULLETS = 3
+# Скорость пули
+BULLET_VEL = 7
 
 # Функция движения красного корабля
 def red_handle_movement(keys_pressed, red):
@@ -94,6 +97,36 @@ def yellow_handle_movement(keys_pressed, yellow):
     # Движение ВНИЗ
     if keys_pressed[pygame.K_DOWN] and yellow.y + VELOCITY + yellow.height < HEIGHT - 15:
         yellow.y += VELOCITY
+
+# Обработка выпущенных пуль
+def handle_bullets(yellow_bullets, red_bullets, yellow, red):
+    # Перебираем все пули красного
+    for bullet in red_bullets:
+        # Двигаем пулю вправо
+        bullet.x += BULLET_VEL
+        # Если пуля задевает желтого игрока
+        if yellow.colliderect(bullet):
+            # Вызываем пользовательское событие попадание в Желтого
+            pygame.event.post(pygame.event.Event(YELLOW_HIT))
+            # Удаляем текущую пулю
+            red_bullets.remove(bullet)
+        # Удаляем пулю если она вышла за экран
+        elif bullet.x > WIDTH:
+            red_bullets.remove(bullet)
+
+    # Перебираем все пули желтого
+    for bullet in yellow_bullets:
+        # Двигаем пулю влево
+        bullet.x -= BULLET_VEL
+        # Если пуля задевает красного игрока
+        if red.colliderect(bullet):
+            # Вызываем пользовательское событие попадание в Красного
+            pygame.event.post(pygame.event.Event(RED_HIT))
+            # Удаляем текущую пулю
+            yellow_bullets.remove(bullet)
+        # Удаляем пулю если она вышла за экран
+        elif bullet.x < 0:
+            yellow_bullets.remove(bullet)
 
 
 # Запускаем бесконечный цикл программы
@@ -127,16 +160,16 @@ while True:
 
         # Если произошло событие нажатия клавиши
         if event.type == pygame.KEYDOWN:
-            # И нажали клавишу Left Ctrl, а так же если длина листа выпущенных пуль красного меньше минимального
-            if event.key == pygame.K_LCTRL and len(red_bullets) < MAX_BULLETS:
+            # И нажали клавишу Пробел, а так же если длина листа выпущенных пуль красного меньше минимального
+            if event.key == pygame.K_SPACE and len(red_bullets) < MAX_BULLETS:
                 # Создаем объект прямоугольника для Пули
                 bullet = pygame.Rect(
                     red.x + red.width, red.y + red.height//2 - 2, 10, 5)
                 # Добавляем выпущенную пулю красному
                 red_bullets.append(bullet)
 
-            # Если нажали клавишу Right Control, создаем выпущенную пулю желтому игроку
-            if event.key == pygame.K_RCTRL and len(yellow_bullets) < MAX_BULLETS:
+            # Если нажали клавишу Enter, создаем выпущенную пулю желтому игроку
+            if event.key == pygame.K_RETURN and len(yellow_bullets) < MAX_BULLETS:
                 # Создаем объект прямоугольника для Пули
                 bullet = pygame.Rect(
                     yellow.x, yellow.y + yellow.height//2 - 2, 10, 5)
@@ -148,6 +181,16 @@ while True:
     # Выполняем установку координат кораблей
     red_handle_movement(keys_pressed, red)
     yellow_handle_movement(keys_pressed, yellow)
+
+    # Проверяем столкновения пуль
+    handle_bullets(yellow_bullets, red_bullets, yellow, red)
+
+    # Перебираем пули красного и рисуем каждый кадр
+    for bullet in red_bullets:
+        pygame.draw.rect(screen, "red", bullet)
+    # Перебираем пули желтого и рисуем каждый кадр
+    for bullet in yellow_bullets:
+        pygame.draw.rect(screen, "yellow", bullet)
 
     # Обновляем кадры игры
     pygame.display.update()
