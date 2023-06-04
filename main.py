@@ -5,6 +5,13 @@ import os
 
 # Подготавливаем необходимые модули Pygame
 pygame.init()
+pygame.mixer.init()
+
+# Подключаем звуки к игре
+# Звук попадания
+BULLET_HIT_SOUND = pygame.mixer.Sound('./assets/grenade.mp3')
+# Звук выстрела
+BULLET_FIRE_SOUND = pygame.mixer.Sound('./assets/silencer.mp3')
 
 ### Константы ###
 # Константы размера окна
@@ -175,10 +182,14 @@ while True:
         # Если случилось пользовательское событие RED_HIT отнимаем жизни у Красного
         if event.type == RED_HIT:
             red_health -= 1
+            # Звук попадания
+            BULLET_HIT_SOUND.play()
 
         # Если случилось пользовательское событие YELLOW_HIT отнимаем жизни у Желтого
         if event.type == YELLOW_HIT:
             yellow_health -= 1
+            # Звук попадания
+            BULLET_HIT_SOUND.play()
 
         # Если произошло событие нажатия клавиши
         if event.type == pygame.KEYDOWN:
@@ -189,6 +200,8 @@ while True:
                     red.x + red.width, red.y + red.height//2 - 2, 10, 5)
                 # Добавляем выпущенную пулю красному
                 red_bullets.append(bullet)
+                # Звук выстрела
+                BULLET_FIRE_SOUND.play()
 
             # Если нажали клавишу Enter, создаем выпущенную пулю желтому игроку
             if event.key == pygame.K_RETURN and len(yellow_bullets) < MAX_BULLETS:
@@ -197,6 +210,8 @@ while True:
                     yellow.x, yellow.y + yellow.height//2 - 2, 10, 5)
                 # Добавляем выпущенную пулю желтому
                 yellow_bullets.append(bullet)
+                # Звук выстрела
+                BULLET_FIRE_SOUND.play()
 
     # Узнаем нажатие клавишей
     keys_pressed = pygame.key.get_pressed()
