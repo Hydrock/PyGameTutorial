@@ -128,6 +128,20 @@ def handle_bullets(yellow_bullets, red_bullets, yellow, red):
         elif bullet.x < 0:
             yellow_bullets.remove(bullet)
 
+# Функция рисует экран победителя
+def draw_winner(text):
+    # Создаем шрифт для победителя
+    WINNER_FONT = pygame.font.SysFont('comicsans', 60)
+    # Создаем надпись
+    draw_text = WINNER_FONT.render(text, 1, 'white')
+    # Устанавливаем надпись в центре игрового поля
+    screen.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
+                         2, HEIGHT/2 - draw_text.get_height()/2))
+    
+    # Обновляем кадр игры
+    pygame.display.update()
+    # Задержка после победы
+    pygame.time.delay(2000)
 
 # Запускаем бесконечный цикл программы
 # Это делается чтобы программа не завершалась и постоянно рисовала новые кадры игры
@@ -150,13 +164,21 @@ while True:
         "Health: " + str(red_health), 1, "white")
     yellow_health_text = HEALTH_FONT.render(
         "Health: " + str(yellow_health), 1, "white")
-    screen.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
-    screen.blit(yellow_health_text, (10, 10))
+    screen.blit(red_health_text, (10, 10))
+    screen.blit(yellow_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
 
     # Постоянно проверяем события игры и если присутствует событие Выход - останавливаем игру.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
+
+        # Если случилось пользовательское событие RED_HIT отнимаем жизни у Красного
+        if event.type == RED_HIT:
+            red_health -= 1
+
+        # Если случилось пользовательское событие YELLOW_HIT отнимаем жизни у Желтого
+        if event.type == YELLOW_HIT:
+            yellow_health -= 1
 
         # Если произошло событие нажатия клавиши
         if event.type == pygame.KEYDOWN:
@@ -191,6 +213,23 @@ while True:
     # Перебираем пули желтого и рисуем каждый кадр
     for bullet in yellow_bullets:
         pygame.draw.rect(screen, "yellow", bullet)
+
+    # Если здоровье упало до нуля, рисуем имя победителя.
+    winner_text = ""
+    if red_health <= 0:
+        winner_text = "Yellow Wins!"
+
+    if yellow_health <= 0:
+        winner_text = "Red Wins!"
+
+    if winner_text != "":
+        draw_winner(winner_text)
+        # Обнуляем пули
+        red_bullets.clear()
+        yellow_bullets.clear()
+        # Восстанавливаем здоровье
+        red_health = 10
+        yellow_health = 10
 
     # Обновляем кадры игры
     pygame.display.update()
