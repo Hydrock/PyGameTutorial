@@ -14,7 +14,12 @@ HEIGHT = 300
 SPACESHIP_WIDTH = 55
 SPACESHIP_HEIGHT = 40
 # Скорость корабля
-VELOCITY = 1
+VELOCITY = 5
+# Количество кадров в секунду
+FPS = 60
+
+# Ограничитель кадров
+clock = pygame.time.Clock()
 
 # Задаем размеры игрового окна
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -80,6 +85,9 @@ def yellow_handle_movement(keys_pressed, yellow):
 # Запускаем бесконечный цикл программы
 # Это делается чтобы программа не завершалась и постоянно рисовала новые кадры игры
 while True:
+    # Ограничиваем количество кадров игры
+    clock.tick(FPS)
+
     # Рисуем изображение на заднем фоне
     screen.blit(SPACE_BG, (0, 0))
 
